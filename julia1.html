@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+    
+    
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="googlebot" content="noindex, nofollow">
+
+    
+
+  
+
+  
+    
+  
+
+  
+
+  <style type="text/css">
+    
+  </style>
+
+  <title>javascript canvas fractal</title>
+
+  
+    
+
+
+
+
+<script type='text/javascript'>//<![CDATA[
+    
+    //http://jsfiddle.net/3fnB6/29/
+    //http://stackoverflow.com/questions/19671543/js-canvas-implementation-of-julia-set
+    
+    //http://mbharris.co.uk/fractals/mandlebrot-set-and-julia-set-explorer-in-html5/jsetexplorer.html
+ var CX=1.83;
+ var CY = -0.22;
+    
+function recogeDatos(){
+    oForm = document.forms[0];
+    CX = oForm.elements["fabscisa"].value;
+    CY = oForm.elements["fordenada"].value;
+    window.alert("hola "+CX+" " + CY);
+    
+}
+window.onload=function(){
+o = {
+    length : 500,
+    width : 500,
+    c : [1.83, -0.02], // c = x + iy will be [x, y]
+    maxIterate : 300,
+    canvas : null
+}
+
+function point(pos, color){
+    var c = 255*255*255 - Math.round((1 + Math.log(color)/Math.log(o.maxIterate)) * 255*255*255);
+    c = c.toString(16);
+    
+    if (c.length == 5) c = '0'+c;
+      else if(c.length == 4) c = '00' + c;
+      else if(c.length == 3) c= '000'+c;
+      else if(c.length == 2) c = '0000' + c;
+      else if(c.length == 1) c ='00000' +c;
+    
+    //if (c.length == 1) c = '0'+c;
+    o.canvas.fillStyle="#"+c;
+    o.canvas.fillRect(pos[0], pos[1], 1, 1);
+}
+
+function conversion(x, y, R){
+    var m = R / o.width;
+    var x1 = m * (2 * x - o.width);
+    var y2 = m * (o.width - 2 * y);
+    return [x1, y2];
+}
+
+function f(z, c){
+    return [z[0]*z[0] - z[1] * z[1] + c[0], 2 * z[0] * z[1] + c[1]];
+}
+
+function abs(z){
+    return Math.sqrt(z[0]*z[0] + z[1]*z[1]);
+}
+
+function init(){
+    var R = (1 + Math.sqrt(1+4*abs(o.c))) / 2,
+        z, x, y, i;
+
+    o.canvas = document.getElementById('a').getContext("2d");
+    for (x = 0; x < o.width; x++){
+        for (y = 0; y < o.length; y++){
+            i = 0;
+            z = conversion(x, y, R);
+            while (i < o.maxIterate && abs(z) < R){
+                z = f(z, o.c);
+                if (abs(z) > R) break;
+                i++;
+            }
+            
+
+            if (i) point([x, y], i / o.maxIterate);
+        }
+    }
+}
+
+init();
+}//]]> 
+
+</script>
+
+  
+</head>
+
+<body>
+    <h1>Visor de conjunto de Julia</h1>
+    <form name="formularioC"   >
+    Valor del parámetro c = cx + i cy:<br/>
+cx: <input type="text" size=8 pattern="[0-9.-]+" name="fabscisa"><br/>
+cy: <input type="text" size=8 pattern="[0-9.-]+" name = "fordenada">
+<input type="button" value="Aceptar" onclick="recogeDatos()">
+</form>
+ <p></p>   
+  <canvas id="a" width="500" height="500"></canvas>
+
+<!--
+Javascript canvas implementation of Julia set fractal: http://stackoverflow.com/q/19671543/1090562
+-->
+  
+</body>
+
+</html>
